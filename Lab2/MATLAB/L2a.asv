@@ -8,11 +8,12 @@ Tset = 0.25;
 OS = 0:1:5;
 
 theta.rad = atan((-1/pi)*log(OS/100));
+theta.deg = theta.rad*180/pi;
 % Place further into LHP 
 % When discretizing, will be less ideal
 % Meet settling time
 Re = 4/Tset;
-Im = (4/Tset)./ tan(theta_rad);
+Im = (4/Tset)./ tan(theta.rad);
 p1 = 1/ tau;
 p2 = complex(-Re,Im);
 p3 = complex(-Re,-Im);
@@ -38,18 +39,28 @@ end
 for i=1:numel(OS)
     figure(1)
     plot(t_ct(:,:,i),y_ct(:,:,i))
-    xlabel('Time t [sec]')
-    ylabel('\theta [rad]')
-    title('Step Response')
-    lgnd{i} = sprintf('OS = %i p = %.2f +- j %.2f', OS(i), -Re(i), Im(i));
+    lgnd{i} = sprintf('OS = %i , p = %.0f +- j %.1f', OS(i), -Re, Im(i));
 end
 
+xlabel('Time t [sec]')
+ylabel('\theta [rad]')
+title('Step Response')
 legend(lgnd);
+print(1,'-djpeg','Plots\Step_pvar');
+
+sim('Simulink\Model_2a');
+ct.ref = ref;
+ct.u = u;
+ct.ang = ServoAng;
+clear tout ref ThRef u ServoAng
+save_system('Simulink\Model_2a');
+close_system('Simulink\Model_2a');
+
 
 % Part b
 %c2d tunstin
-Ts = 100E-3;
-Tz = c2d(C, Ts,'tustin');
+Ts = 30E-3;
+Tz = c2d(C(2), Ts,'tustin');
 format long
 [num,den] = tfdata(Tz,'v');
 a = num(1);
@@ -57,5 +68,12 @@ b = num(2);
 c = den(1);
 d = den(2);
 
+sim('Simulink\Model_2b');
+dt.ref = ref;
+dt.u = u;
+dt.ang = ServoAng;
+clear tout ref ThRef u ServoAng
+save_system('Simulink\Model_2b');
+close_system('Simulink\Model_2b');
 
-%fig = trackplot();
+fig = trackplot(ct.ref, ct.u, ct.ang, 'CT', dt.ref, dt.u, dt.ang, 'DT', 'Tracking Plots');

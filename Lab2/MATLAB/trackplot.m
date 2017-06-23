@@ -1,5 +1,8 @@
-function [fig] = trackplot(ref1, u1, y1, txt1, ref2, u2, y2, txt2, tlt)
+function [fig] = trackplot(ref1, u1, y1, txt1, ref2, u2, y2, txt2, ms)
     
+    tlt = sprintf('Tracking Plots for T_s = %0.f ms', ms);
+
+
     fig = figure(1);
     subplot(3,1,1)
     hold on
@@ -37,9 +40,10 @@ function [fig] = trackplot(ref1, u1, y1, txt1, ref2, u2, y2, txt2, tlt)
     ylabel('ServoAng [rad]');
     legend(txt1, txt2);
     
-    plotstr=strcat('Plots\Tracking_',txt1,'_',txt2);   
+    ms = num2str(ms);
+    plotstr=strcat('Plots\Tracking_',txt1,'_',txt2, '_', ms, 'ms');   
     plotstr=char(plotstr);
-    print(1,'-djpeg','Plots\Tracking', plotstr);
+    print(1,'-djpeg',plotstr);
 
 end
 

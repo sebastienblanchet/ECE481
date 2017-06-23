@@ -39,17 +39,31 @@ end
 for i=1:numel(OS)
     figure(1)
     plot(t_ct(:,:,i),y_ct(:,:,i))
-    lgnd{i} = sprintf('OS = %i p = %f +- j %.1f', OS(i), -Re, Im(i));
+    lgnd{i} = sprintf('OS = %i , p = %.0f +- j %.1f', ...
+        OS(i), -Re, Im(i));
 end
+
 xlabel('Time t [sec]')
 ylabel('\theta [rad]')
 title('Step Response')
 legend(lgnd);
+print(1,'-djpeg','Plots\Step_pvar');
+close
+
+sim('Simulink\Model_2a');
+ct.ref = ref;
+ct.u = u;
+ct.ang = ServoAng;
+clear tout ref ThRef u ServoAng
+save_system('Simulink\Model_2a');
+close_system('Simulink\Model_2a');
+
 
 % Part b
 %c2d tunstin
-Ts = 100E-3;
-Tz = c2d(C, Ts,'tustin');
+ms = 1;
+Ts = ms*1E-3;
+Tz = c2d(C(2), Ts,'tustin');
 format long
 [num,den] = tfdata(Tz,'v');
 a = num(1);
@@ -57,5 +71,13 @@ b = num(2);
 c = den(1);
 d = den(2);
 
+sim('Simulink\Model_2b');
+dt.ref = ref;
+dt.u = u;
+dt.ang = ServoAng;
+clear tout ref ThRef u ServoAng
+save_system('Simulink\Model_2b');
+close_system('Simulink\Model_2b');
 
-%fig = trackplot();
+fig = trackplot(ct.ref, ct.u, ct.ang, 'CT', dt.ref, dt.u, dt.ang, ...
+    'DT', ms);
