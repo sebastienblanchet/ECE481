@@ -8,12 +8,11 @@ Tset = 0.25;
 OS = 0:1:5;
 
 theta.rad = atan((-1/pi)*log(OS/100));
-theta.deg = theta.rad*180/pi;
 % Place further into LHP 
 % When discretizing, will be less ideal
 % Meet settling time
 Re = 4/Tset;
-Im = (4/Tset)./ tan(theta.rad);
+Im = (4/Tset)./ tan(theta_rad);
 p1 = 1/ tau;
 p2 = complex(-Re,Im);
 p3 = complex(-Re,-Im);
@@ -39,11 +38,12 @@ end
 for i=1:numel(OS)
     figure(1)
     plot(t_ct(:,:,i),y_ct(:,:,i))
-    lgnd{i} = sprintf('OS = %i p = %f +- j %.1f', OS(i), -Re, Im(i));
+    xlabel('Time t [sec]')
+    ylabel('\theta [rad]')
+    title('Step Response')
+    lgnd{i} = sprintf('OS = %i p = %.2f +- j %.2f', OS(i), -Re(i), Im(i));
 end
-xlabel('Time t [sec]')
-ylabel('\theta [rad]')
-title('Step Response')
+
 legend(lgnd);
 
 % Part b
