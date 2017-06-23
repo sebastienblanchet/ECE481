@@ -4,7 +4,7 @@ clear; close all; clc;
 
 tau = 0.023;
 K1 = - 1.02/tau;
-Tset = 0.25;
+Tset = 0.5;
 OS = 0:1:5;
 
 theta.rad = atan((-1/pi)*log(OS/100));
@@ -70,6 +70,11 @@ a = num(1);
 b = num(2);
 c = den(1);
 d = den(2);
+
+c1 = -d/c;
+c2 = a/c;
+c3 = b/c;
+
 
 sim('Simulink\Model_2b');
 dt.ref = ref;
