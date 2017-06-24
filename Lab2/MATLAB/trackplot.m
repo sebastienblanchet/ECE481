@@ -1,9 +1,8 @@
-function [fig] = trackplot(ref1, u1, y1, txt1, ref2, u2, y2, txt2, ms)
+function [fig] = trackplot(ref1, u1, y1, txt1, ref2, u2, y2, txt2, ms, fignum)
     
-    tlt = sprintf('Tracking Plots for T_s = %0.f ms', ms);
+    tlt = sprintf('Tracking Plots for T_s = %0.f ms of %s vs. %s', ms, txt1, txt2);
 
-
-    fig = figure(1);
+    fig = figure(fignum);
     subplot(3,1,1)
     hold on
 
@@ -43,7 +42,7 @@ function [fig] = trackplot(ref1, u1, y1, txt1, ref2, u2, y2, txt2, ms)
     ms = num2str(ms);
     plotstr=strcat('Plots\Tracking_',txt1,'_',txt2, '_', ms, 'ms');   
     plotstr=char(plotstr);
-    print(1,'-djpeg',plotstr);
+    print(fignum,'-djpeg',plotstr);
 
 end
 
