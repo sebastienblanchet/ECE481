@@ -54,20 +54,18 @@ title('Step Response')
 legend(lgnd);
 print(1,'-djpeg','Plots\Step_pvar');
 
-
 % Simulate CT controller C1(s)
 sim('Simulink\Model_2a');
 ct.ref = ref;
 ct.u = u;
 ct.ang = ServoAng;
 clear tout ref ThRef u ServoAng
-save_system('Simulink\Model_2a');
-close_system('Simulink\Model_2a');
 
 % Part b, emulation of C1(s) with trapzoidal rule
 Tz = c2d(C(2), Ts,'tustin');
 format long
 [num,den] = tfdata(Tz,'v');
+
 % Controller coefficients for LabVIEW
 a = num(1);
 b = num(2);
@@ -83,8 +81,6 @@ dt.ref = ref;
 dt.u = u;
 dt.ang = ServoAng;
 clear tout ref ThRef u ServoAng
-% save_system('Simulink\Model_2b');
-% close_system('Simulink\Model_2b');
 
 % Experimental data
 exp.ref = xlsread('N:\GitHub\ECE481\Lab2\Exp Data\06-22-17\ThRef.xlsx');
