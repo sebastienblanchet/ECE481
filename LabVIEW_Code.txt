@@ -13,7 +13,7 @@ The inputs "e1" and "e2"are wired  to the corresponding shift register outputs.
  "e1" holds the value of "e" from the previous iteration and "e2" holds the value of "e1" from  the previous iteration. */
 
 /* Place your sensor SCALING here */
-BallPosn = posV ;  /* V to V */
+BallPosn = (posV-3.22)/0.097601918465228;  /* V to V */
 
 /*  */
 ServoAng = -(angV-5.232)/(0.7404);  /* V to V */
@@ -36,7 +36,6 @@ else
 			to avoid introducing a nonlinearity into your controller loop. Create separate variables to hold nonlinear values.*/
 
 			/* Place your outer loop BALL POSITION CONTROLLER below */
-			BallPosn = 0; // REMOVE this line when the ball is being used on the beam
 
 			/* Place your gear angle SATURATOR below */
 			if(ref>0.7)
@@ -47,7 +46,10 @@ else
 			   {ThRef=ref;}
 
 			/* Place your inner loop GEAR ANGLE CONTROLLER below */
-			  u = -20*(ThRef-ServoAng);
+			 e = -(ThRef - ServoAng);
+
+			/* 1ms*/
+			u = ((0.984126984126984*u1)+(2.143569664187439*e)-(2.052353933796484*e1));
 	   }
 	} 
     
