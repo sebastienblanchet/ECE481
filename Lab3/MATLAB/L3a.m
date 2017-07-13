@@ -1,11 +1,12 @@
-% Lab 2, Part A
-
 clear; close all; clc;
 
+%% Lab 1
 % Motor params
 tau = 0.023;
 K1 = -1.02/tau;
 
+
+%% Lab 2
 % Place further into LHP, vary %OS
 Tset = 0.5;
 OS = 1;
@@ -31,7 +32,7 @@ s = tf('s');
 P = (K1)/(s*(s+p1));
 C1 = K*((s+p1)/(s+g0));
 
-% Part b, emulation of C1(s) with trapzoidal rule
+% Lab 2 Part b, emulation of C1(s) with trapzoidal rule
 D1 = c2d(C1, Ts,'tustin');
 format long
 [c1.num,c1.den] = tfdata(D1,'v');
@@ -53,10 +54,18 @@ m = 0.064;
 g = 9.81;
 D = 0.5;
 l = R - D;
-
 K2 = r/L;
 K3 = 4.55;
 
+% Ball pson scale
+x1 = R;
+x2 = L-R;
+y1 = 3.22;
+y2 = 7.29;
+m = (x2-x1)/(y2-y1);
+b = x1-m*y1;
+
+%% Lab 3
 % Design controller 2
 C2 = 7*((s+0.35)/(s+2.5));
 D2 = c2d(C2, Ts,'tustin');
@@ -74,19 +83,10 @@ c2.c3 = c2.b/c2.c;
 % Wave form
 wave.max = 0.24;
 wave.min = 0.14;
-
 wave.amp = 0.5*(wave.max-wave.min);
 wave.offset = wave.min+wave.amp;
 
-% Ball pson scale
-x1 = R;
-x2 = L-R;
-y1 = 3.22;
-y2 = 7.29;
-m = (x2-x1)/(y2-y1);
-b = x1-m*y1;
-
-% Simulate CT controller C1(s)
+% Simulate DT controller C2(s)
 sim('Simulink\Model_3a_2012');
 sim.ThRef = ThRef;
 sim.u = u;
@@ -96,6 +96,7 @@ sim.BallPosn = BallPosn;
 sim.txt = 'Sim';
 clear tout ThRef u ServoAng yref BallPosn
 
+% Import experimental data
 exp.data = xlsread('N:\GitHub\ECE481\Lab3\Data\170711.xlsx');
 exp.t = exp.data(:,1);
 exp.yref = exp.data(:,2);
@@ -105,8 +106,9 @@ exp.u = exp.data(:,5);
 exp.ThRef = exp.data(:,6);
 exp.txt = 'Exp';
 
+% Convert from cm to m
 exp.BallPosn = exp.BallPosn/100;
 
-
+% Tracking plot
 trackplot3(sim, exp, ms, 1);
 
