@@ -58,8 +58,8 @@ K2 = r/L;
 K3 = 4.55;
 
 % Ball pson scale
-x1 = R;
-x2 = L-R;
+x1 = R/100;
+x2 = (L-R)/100;
 y1 = 3.22;
 y2 = 7.29;
 m = (x2-x1)/(y2-y1);
@@ -67,7 +67,9 @@ b = x1-m*y1;
 
 %% Lab 3
 % Design controller 2
+
 C2 = 7*((s+0.35)/(s+2.5));
+
 D2 = c2d(C2, Ts,'tustin');
 [c2.num,c2.den] = tfdata(D2,'v');
 
@@ -87,7 +89,7 @@ wave.amp = 0.5*(wave.max-wave.min);
 wave.offset = wave.min+wave.amp;
 
 % Simulate DT controller C2(s)
-sim('Simulink\Model_3a_2012');
+sim('Simulink\Model_3a_2015a');
 sim.ThRef = ThRef;
 sim.u = u;
 sim.ServoAng = ServoAng;
@@ -97,7 +99,7 @@ sim.txt = 'Sim';
 clear tout ThRef u ServoAng yref BallPosn
 
 % Import experimental data
-exp.data = xlsread('N:\GitHub\ECE481\Lab3\Data\170711.xlsx');
+exp.data = xlsread('N:\GitHub\ECE481\Lab3\Data\170713_2.xlsx');
 exp.t = exp.data(:,1);
 exp.yref = exp.data(:,2);
 exp.ServoAng = exp.data(:,3);
@@ -107,8 +109,7 @@ exp.ThRef = exp.data(:,6);
 exp.txt = 'Exp';
 
 % Convert from cm to m
-exp.BallPosn = exp.BallPosn/100;
+exp.BallPosn = exp.BallPosn;
 
 % Tracking plot
 trackplot3(sim, exp, ms, 1);
-
