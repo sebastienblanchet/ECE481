@@ -88,25 +88,13 @@ b = x1-m*y1;
 
 % Simulate CT controller C1(s)
 sim('Simulink\Model_3a_2012');
-sim.ThRef = ThRef;
-sim.u = u;
-sim.ServoAng = ServoAng;
-sim.yref = yref;
-sim.BallPosn = BallPosn;
-sim.txt = 'Sim';
-clear tout ThRef u ServoAng yref BallPosn
+dt.ref = ref;
+dt.u = u;
+dt.ang = ServoAng;
+dt.yref = yref;
+dt.BallPosn = BallPosn;
+clear tout ref ThRef u ServoAng yref BallPosn
 
 exp.data = xlsread('N:\GitHub\ECE481\Lab3\Data\170711.xlsx');
-exp.t = exp.data(:,1);
-exp.yref = exp.data(:,2);
-exp.ServoAng = exp.data(:,3);
-exp.BallPosn = exp.data(:,4);
-exp.u = exp.data(:,5);
-exp.ThRef = exp.data(:,6);
-exp.txt = 'Exp';
 
-exp.BallPosn = exp.BallPosn/100;
-
-
-trackplot3(sim, exp, ms, 1);
 

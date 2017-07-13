@@ -1,4 +1,4 @@
-function [fig] = trackplot(ref1, u1, y1, txt1, ref2, u2, y2, txt2, ms, fignum)
+function [fig] = trackplot3(sim, ref2, u2, y2, txt2, ms, fignum)
     
     tlt = sprintf('Tracking Plots for T_s = %0.f ms of %s vs. %s', ms, txt1, txt2);
 
