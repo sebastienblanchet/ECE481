@@ -1,0 +1,407 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>L3e</title><meta name="generator" content="MATLAB 8.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-07-20"><meta name="DC.source" content="L3e.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Lab 1</a></li><li><a href="#3">Lab 2</a></li><li><a href="#4">Lab 3</a></li></ul></div><pre class="codeinput">clear; close <span class="string">all</span>; clc;
+</pre><h2>Lab 1<a name="2"></a></h2><p>Motor params</p><pre class="codeinput">tau = 0.023;
+K1 = -1.02/tau;
+</pre><h2>Lab 2<a name="3"></a></h2><p>Place further into LHP, vary %OS</p><pre class="codeinput">c1.Tset = 0.5;
+c1.OS = 1;
+
+<span class="comment">% DT simlation parameters</span>
+ms = 1;
+Ts = ms*1E-3;
+ncyc = 2;
+Nsamp = 40E3;
+fhz = ncyc/(Nsamp*Ts);
+tsim = 40;
+
+
+<span class="comment">% Wave form</span>
+wave.max = 0.29;
+wave.min = 0.14;
+wave.amp = 0.5*(wave.max-wave.min);
+wave.offset = wave.min+wave.amp;
+
+<span class="comment">% Pole placement for C1(s)</span>
+[c1.Re, c1.Im, c1.theta] = zone(c1.OS, c1.Tset);
+c1.p1 = 1/ tau;
+c1.p2 = complex(-c1.Re,c1.Im);
+c1.p3 = complex(-c1.Re,-c1.Im);
+c1.g0 = 2*c1.Re;
+c1.K = (c1.Re^2 + c1.Im^2)/K1;
+s = tf(<span class="string">'s'</span>);
+P = (K1)/(s*(s+c1.p1));
+C1 = c1.K*((s+c1.p1)/(s+c1.g0));
+
+<span class="comment">% Inside loop</span>
+
+Ps = (zpk(C1)*zpk(P))/(1+zpk(C1)*zpk(P));
+
+<span class="comment">% Lab 2 Part b, emulation of C1(s) with trapzoidal rule</span>
+D1 = c2d(C1, Ts,<span class="string">'tustin'</span>);
+format <span class="string">long</span>
+[c1.num,c1.den] = tfdata(D1,<span class="string">'v'</span>);
+
+
+<span class="comment">% Controller coefficients for LabVIEW</span>
+c1.a = c1.num(1);
+c1.b = c1.num(2);
+c1.c = c1.den(1);
+c1.d = c1.den(2);
+c1.c1 = -c1.d/c1.c;
+c1.c2 = c1.a/c1.c;
+c1.c3 = c1.b/c1.c;
+
+<span class="comment">% Gains</span>
+r = 2.54;
+L = 41.7;
+R = 1.27;
+m = 0.064;
+g = 9.81;
+D = 0.5;
+l = R - D;
+K2 = r/L;
+K3 = 4.55;
+Kbb = K2*K3;
+
+<span class="comment">% Ball pson scale</span>
+x1 = R/100;
+x2 = (L-R)/100;
+y1 = 3.22;
+y2 = 7.29;
+m = (x2-x1)/(y2-y1);
+b = x1-m*y1;
+</pre><h2>Lab 3<a name="4"></a></h2><p>Design controller 2</p><pre class="codeinput">c2.tset =10.4;
+c2.os = 48;
+
+[c2.Re, c2.Im, c2.ang] = zone(c2.os,c2.tset);
+
+c2.p1 = 1;
+c2.p2 = 2.5;
+c2.p3 = 5;
+
+c2.eps = 1/(c2.p1+c2.p2+c2.p3);
+c2.Kd = (c2.eps*(c2.p1*c2.p2+c2.p3*(c2.p1+c2.p2)))/Kbb;
+c2.Kp =(c2.eps*(c2.p1*c2.p2*c2.p3))/Kbb;
+C2 = (c2.Kd*s+c2.Kp)/(1+c2.eps*s);
+
+D2 = c2d(C2, Ts,<span class="string">'tustin'</span>);
+[c2.num,c2.den] = tfdata(D2,<span class="string">'v'</span>);
+
+<span class="comment">% Controller coefficients for LabVIEW</span>
+c2.a = c2.num(1);
+c2.b = c2.num(2);
+c2.c = c2.den(1);
+c2.d = c2.den(2);
+c2.c1 = -c2.d/c2.c;
+c2.c2 = c2.a/c2.c;
+c2.c3 = c2.b/c2.c;
+
+Pry = Ps*zpk(K2*K3/s^2);
+[c2.y, c2.t] = step(feedback(C2*Pry,1),15);
+
+
+<span class="comment">% Step response</span>
+fig = figure(1);
+plot(c2.t, 0.29*c2.y)
+title(<span class="string">'Step Response'</span>);
+xlabel(<span class="string">'Time [sec]'</span>);
+ylabel(<span class="string">'y [m]'</span>);
+print(1,<span class="string">'-djpeg'</span>,<span class="string">'3f_Step'</span>);
+
+<span class="comment">% Simulate DT controller C2(s)</span>
+sim(<span class="string">'Simulink\Model_3ac_2015a'</span>);
+sim.ThRef = ThRef;
+sim.ref = ref;
+sim.u = u;
+sim.ServoAng = ServoAng;
+sim.yref = yref;
+sim.BallPosn = BallPosn;
+sim.txt = <span class="string">'Sim3f'</span>;
+clear <span class="string">tout</span> <span class="string">ThRef</span> <span class="string">u</span> <span class="string">ServoAng</span> <span class="string">yref</span> <span class="string">BallPosn</span> <span class="string">ref</span> <span class="string">BeamAng</span>
+
+<span class="comment">% Check if specs are met</span>
+C2step = stepinfo(feedback(C2*Pry,1));
+
+<span class="keyword">if</span>(C2step.Overshoot &lt;= c2.os)
+    display(<span class="string">'Overshoot met with:'</span>)
+    C2step.Overshoot
+<span class="keyword">else</span>
+    display(<span class="string">'Overshoot NOT met'</span>)
+<span class="keyword">end</span>
+
+<span class="comment">%Setteling time</span>
+<span class="keyword">if</span>(C2step.SettlingTime &lt;= c2.tset)
+    display(<span class="string">'SettlingTime met:'</span>)
+    C2step.SettlingTime
+<span class="keyword">else</span>
+    display(<span class="string">'SettlingTime NOT met'</span>)
+<span class="keyword">end</span>
+
+<span class="comment">% Saturation</span>
+display(<span class="string">'ThRef Max'</span>)
+max(abs(sim.ref(5000:end,2)))
+
+<span class="comment">% Import experimental data</span>
+exp.data = xlsread(<span class="string">'N:\GitHub\ECE481\Lab3\Data\170720_3f.xlsx'</span>);
+exp.t = exp.data(:,1);
+exp.yref = exp.data(:,2);
+exp.ServoAng = exp.data(:,3);
+exp.BallPosn = exp.data(:,4);
+exp.u = exp.data(:,5);
+exp.ThRef = exp.data(:,6);
+exp.txt = <span class="string">'Exp3f'</span>;
+
+<span class="comment">% Tracking plot</span>
+trackplot3(sim, exp, ms, 2);
+</pre><pre class="codeoutput">Overshoot met with:
+
+ans =
+
+  44.723843571112766
+
+SettlingTime met:
+
+ans =
+
+   4.031460890470878
+
+ThRef Max
+
+ans =
+
+  10.782234269527693
+
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+clear; close all; clc;
+
+%% Lab 1
+% Motor params
+tau = 0.023;
+K1 = -1.02/tau;
+
+
+%% Lab 2
+% Place further into LHP, vary %OS
+c1.Tset = 0.5;
+c1.OS = 1;
+
+% DT simlation parameters
+ms = 1;
+Ts = ms*1E-3;
+ncyc = 2;
+Nsamp = 40E3;
+fhz = ncyc/(Nsamp*Ts);
+tsim = 40;
+
+
+% Wave form
+wave.max = 0.29;
+wave.min = 0.14;
+wave.amp = 0.5*(wave.max-wave.min);
+wave.offset = wave.min+wave.amp;
+
+% Pole placement for C1(s)
+[c1.Re, c1.Im, c1.theta] = zone(c1.OS, c1.Tset);
+c1.p1 = 1/ tau;
+c1.p2 = complex(-c1.Re,c1.Im);
+c1.p3 = complex(-c1.Re,-c1.Im);
+c1.g0 = 2*c1.Re;
+c1.K = (c1.Re^2 + c1.Im^2)/K1;
+s = tf('s');
+P = (K1)/(s*(s+c1.p1));
+C1 = c1.K*((s+c1.p1)/(s+c1.g0));
+
+% Inside loop
+
+Ps = (zpk(C1)*zpk(P))/(1+zpk(C1)*zpk(P));
+
+% Lab 2 Part b, emulation of C1(s) with trapzoidal rule
+D1 = c2d(C1, Ts,'tustin');
+format long
+[c1.num,c1.den] = tfdata(D1,'v');
+
+
+% Controller coefficients for LabVIEW
+c1.a = c1.num(1);
+c1.b = c1.num(2);
+c1.c = c1.den(1);
+c1.d = c1.den(2);
+c1.c1 = -c1.d/c1.c;
+c1.c2 = c1.a/c1.c;
+c1.c3 = c1.b/c1.c;
+
+% Gains
+r = 2.54;
+L = 41.7;
+R = 1.27; 
+m = 0.064;
+g = 9.81;
+D = 0.5;
+l = R - D;
+K2 = r/L;
+K3 = 4.55;
+Kbb = K2*K3;
+
+% Ball pson scale
+x1 = R/100;
+x2 = (L-R)/100;
+y1 = 3.22;
+y2 = 7.29;
+m = (x2-x1)/(y2-y1);
+b = x1-m*y1;
+
+%% Lab 3
+% Design controller 2
+c2.tset =10.4;
+c2.os = 48;
+
+[c2.Re, c2.Im, c2.ang] = zone(c2.os,c2.tset);
+
+c2.p1 = 1;
+c2.p2 = 2.5;
+c2.p3 = 5;
+
+c2.eps = 1/(c2.p1+c2.p2+c2.p3);
+c2.Kd = (c2.eps*(c2.p1*c2.p2+c2.p3*(c2.p1+c2.p2)))/Kbb;
+c2.Kp =(c2.eps*(c2.p1*c2.p2*c2.p3))/Kbb;
+C2 = (c2.Kd*s+c2.Kp)/(1+c2.eps*s);
+
+D2 = c2d(C2, Ts,'tustin');
+[c2.num,c2.den] = tfdata(D2,'v');
+
+% Controller coefficients for LabVIEW
+c2.a = c2.num(1);
+c2.b = c2.num(2);
+c2.c = c2.den(1);
+c2.d = c2.den(2);
+c2.c1 = -c2.d/c2.c;
+c2.c2 = c2.a/c2.c;
+c2.c3 = c2.b/c2.c;
+
+Pry = Ps*zpk(K2*K3/s^2);
+[c2.y, c2.t] = step(feedback(C2*Pry,1),15);
+
+
+% Step response
+fig = figure(1);
+plot(c2.t, 0.29*c2.y)
+title('Step Response');
+xlabel('Time [sec]');
+ylabel('y [m]');
+print(1,'-djpeg','3f_Step');
+
+% Simulate DT controller C2(s)
+sim('Simulink\Model_3ac_2015a');
+sim.ThRef = ThRef;
+sim.ref = ref;
+sim.u = u;
+sim.ServoAng = ServoAng;
+sim.yref = yref;
+sim.BallPosn = BallPosn;
+sim.txt = 'Sim3f';
+clear tout ThRef u ServoAng yref BallPosn ref BeamAng
+
+% Check if specs are met
+C2step = stepinfo(feedback(C2*Pry,1));
+
+if(C2step.Overshoot <= c2.os)
+    display('Overshoot met with:')
+    C2step.Overshoot
+else
+    display('Overshoot NOT met')
+end
+
+%Setteling time
+if(C2step.SettlingTime <= c2.tset)
+    display('SettlingTime met:')
+    C2step.SettlingTime 
+else
+    display('SettlingTime NOT met')
+end
+
+% Saturation
+display('ThRef Max')
+max(abs(sim.ref(5000:end,2)))
+
+% Import experimental data
+exp.data = xlsread('N:\GitHub\ECE481\Lab3\Data\170720_3f.xlsx');
+exp.t = exp.data(:,1);
+exp.yref = exp.data(:,2);
+exp.ServoAng = exp.data(:,3);
+exp.BallPosn = exp.data(:,4);
+exp.u = exp.data(:,5);
+exp.ThRef = exp.data(:,6);
+exp.txt = 'Exp3f';
+
+% Tracking plot
+trackplot3(sim, exp, ms, 2);
+
+##### SOURCE END #####
+--></body></html>

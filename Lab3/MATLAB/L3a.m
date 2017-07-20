@@ -17,6 +17,7 @@ Ts = ms*1E-3;
 ncyc = 2;
 Nsamp = 10E3;
 fhz = ncyc/(Nsamp*Ts);
+tsim = 10;
 
 % Pole placement for C1(s)
 theta.rad = atan((-1/pi)*log(OS/100));
@@ -90,13 +91,14 @@ wave.amp = 0.5*(wave.max-wave.min);
 wave.offset = wave.min+wave.amp;
 
 % Simulate DT controller C2(s)
+% set_param('Simulink/Model_3ac_2015a', 'StopTime', tsim);
 sim('Simulink\Model_3ac_2015a');
 sim.ThRef = ThRef;
 sim.u = u;
 sim.ServoAng = ServoAng;
 sim.yref = yref;
 sim.BallPosn = BallPosn;
-sim.txt = 'Sim';
+sim.txt = 'Sim3a';
 clear tout ThRef u ServoAng yref BallPosn
 
 % Import experimental data
@@ -107,7 +109,7 @@ exp.ServoAng = exp.data(:,3);
 exp.BallPosn = exp.data(:,4);
 exp.u = exp.data(:,5);
 exp.ThRef = exp.data(:,6);
-exp.txt = 'Exp';
+exp.txt = 'Exp3a';
 
 % Tracking plot
 trackplot3(sim, exp, ms, 1);

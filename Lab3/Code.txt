@@ -1,0 +1,78 @@
+/* ======== USER INTERFACE TEMPLATE ============= */
+/*  Insert below the code for your scaling, saturation block, and controllers.*/
+
+/*  Variables may be declared on the box border, as shown for the input 
+ "Tms" and the output "BallPosn". Variables can also be declared inline as was done for "Temp1". */
+
+float Temp1; 
+float eGearAng;
+
+/*  Shift registers permit previous values of variables to be saved. 
+The output variable "e" is wired to a shift register input on the For Loop border.  
+The inputs "e1" and "e2"are wired  to the corresponding shift register outputs.
+ "e1" holds the value of "e" from the previous iteration and "e2" holds the value of "e1" from  the previous iteration. */
+
+/* Place your sensor SCALING here */
+/* NO scaling is provided for the demo */
+BallPosn = ( 0.096216216216216*posV)-0.297116216216216; 
+ServoAng = -(angV-5.232)/(0.7404);
+/* SCALING end */
+
+if (Loop  < 3) /* all shift registers cleared after 3rd iteration; this statement initializes the shift registers */
+   {u = e = ThRef = posV= angV =ServoAng= BallPosn= 0;}
+else
+{
+if (Manual)    /*manual motor voltage control*/
+   {   u = MotV;}
+    else     /*control algorithm*/
+    
+   { 
+
+/* CAUTION: DO NOT load the output of a nonlinear block (e.g., saturator, offset) into a SHIFT REGISTER, 
+to avoid introducing a nonlinearity into your controller loop. Create separate variables to hold nonlinear values.*/
+
+/* Place your outer loop BALL POSITION CONTROLLER below */
+e = (BallPosn - ref);
+float c1;
+float c2;
+float c3;
+float BallSticPos;
+float BallSticNeg;
+
+c1=0.991535972118496;
+c2= 71.881112953602141;
+c3= -71.836201292900114;
+
+ThRef =c1*ThRef1+c2*e+c3*e1;
+
+/* Place your gear angle SATURATOR below 
+feed Temp1 into saturator block
+*/
+
+Temp1 = ThRef;
+
+BallSticPos = 0.01;
+BallSticNeg = 0.125;
+
+if(Temp1>0.7)
+   {Temp1=0.7-BallSticPos;}
+else if (Temp1 <-0.7)
+   {Temp1=-0.7+BallSticNeg;}
+
+if(Temp1>0)
+ {Temp1 = Temp1 + BallSticPos;}
+else if(Temp1<0)
+ {Temp1 = Temp1 - BallSticNeg;}
+
+eGearAng = -(Temp1-ServoAng);
+
+
+/* Place your inner loop GEAR ANGLE CONTROLLER below  */
+
+u = ((0.984126984126984*u1)+(2.143569664187439*eGearAng)-(2.052353933796484*eGearAng1));
+   }
+} 
+    
+/* ThRef, ThRef1, e, e1 are present, but not used in this demo.  
+However, they will be necessary (at a minimum) when the controllers will be implemented. */
+

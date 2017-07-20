@@ -19,6 +19,7 @@ Nsamp = 40E3;
 fhz = ncyc/(Nsamp*Ts);
 tsim = 40;
 
+
 % Wave form
 wave.max = 0.29;
 wave.min = 0.14;
@@ -44,6 +45,7 @@ Ps = (zpk(C1)*zpk(P))/(1+zpk(C1)*zpk(P));
 D1 = c2d(C1, Ts,'tustin');
 format long
 [c1.num,c1.den] = tfdata(D1,'v');
+
 
 % Controller coefficients for LabVIEW
 c1.a = c1.num(1);
@@ -76,14 +78,14 @@ b = x1-m*y1;
 
 %% Lab 3
 % Design controller 2
-c2.tset = 7.4;
+c2.tset =10.4;
 c2.os = 48;
 
 [c2.Re, c2.Im, c2.ang] = zone(c2.os,c2.tset);
 
-c2.p1 = c2.Re;
-c2.p2 = 1.5;
-c2.p3 = 2.5;
+c2.p1 = 1;
+c2.p2 = 2.5;
+c2.p3 = 5;
 
 c2.eps = 1/(c2.p1+c2.p2+c2.p3);
 c2.Kd = (c2.eps*(c2.p1*c2.p2+c2.p3*(c2.p1+c2.p2)))/Kbb;
@@ -105,14 +107,14 @@ c2.c3 = c2.b/c2.c;
 Pry = Ps*zpk(K2*K3/s^2);
 [c2.y, c2.t] = step(feedback(C2*Pry,1),15);
 
-% Step response
-% fig = figure(1);
-% plot(c2.t, 0.17*c2.y)
-% title('Step Response');
-% xlabel('Time [sec]');
-% ylabel('y [m]');
-% print(1,'-djpeg','3c_Step_Re051525');
 
+% Step response
+fig = figure(1);
+plot(c2.t, 0.29*c2.y)
+title('Step Response');
+xlabel('Time [sec]');
+ylabel('y [m]');
+print(1,'-djpeg','3f_Step');
 
 % Simulate DT controller C2(s)
 sim('Simulink\Model_3ac_2015a');
@@ -122,9 +124,8 @@ sim.u = u;
 sim.ServoAng = ServoAng;
 sim.yref = yref;
 sim.BallPosn = BallPosn;
-sim.txt = 'Sim3d2';
+sim.txt = 'Sim3f';
 clear tout ThRef u ServoAng yref BallPosn ref BeamAng
-% trackplot1(sim, ms, 2)
 
 % Check if specs are met
 C2step = stepinfo(feedback(C2*Pry,1));
@@ -145,22 +146,18 @@ else
 end
 
 % Saturation
-if(max(abs(sim.ref(5000:end,2))) <= 0.7)
-    display('ThRef does NOT saturate')
-else
-    display('ThRef SATURATES')
-    max(abs(sim.ref(5000:end,2)))
-end
- 
+display('ThRef Max')
+max(abs(sim.ref(5000:end,2)))
+
 % Import experimental data
-exp.data = xlsread('N:\GitHub\ECE481\Lab3\Data\170720_3c_Re05_15_25.xlsx');
+exp.data = xlsread('N:\GitHub\ECE481\Lab3\Data\170720_3f.xlsx');
 exp.t = exp.data(:,1);
 exp.yref = exp.data(:,2);
 exp.ServoAng = exp.data(:,3);
 exp.BallPosn = exp.data(:,4);
 exp.u = exp.data(:,5);
 exp.ThRef = exp.data(:,6);
-exp.txt = 'Exp3d2';
+exp.txt = 'Exp3f';
 
 % Tracking plot
 trackplot3(sim, exp, ms, 2);
