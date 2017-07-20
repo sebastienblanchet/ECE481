@@ -1,4 +1,4 @@
-clear; close all;
+clear; close all; clc;
 
 %% Lab 1
 % Motor params
@@ -8,8 +8,8 @@ K1 = -1.02/tau;
 
 %% Lab 2
 % Place further into LHP, vary %OS
-Tset = 0.5;
-OS = 1;
+c1.Tset = 0.5;
+c1.OS = 1;
 
 % DT simlation parameters
 ms = 1;
@@ -19,19 +19,20 @@ Nsamp = 10E3;
 fhz = ncyc/(Nsamp*Ts);
 
 % Pole placement for C1(s)
-theta.rad = atan((-1/pi)*log(OS/100));
-theta.deg = theta.rad*180/pi;
-Re = 4/Tset;
-Im = (4/Tset)./ tan(theta.rad);
-p1 = 1/ tau;
-p2 = complex(-Re,Im);
-p3 = complex(-Re,-Im);
-g0 = 2*Re;
-K = (Re.^2 + Im.^2)/K1;
+[c1.Re, c1.Im, c1.theta] = zone(c1.OS, c1.Tset);
+
+c1.p1 = 1/ tau;
+c1.p2 = complex(-c1.Re,c1.Im);
+c1.p3 = complex(-c1.Re,-c1.Im);
+c1.g0 = 2*c1.Re;
+c1.K = (c1.Re^2 + c1.Im^2)/K1;
 s = tf('s');
-P = (K1)/(s*(s+p1));
-c1.p1 =p1;
-C1 = K*((s+p1)/(s+g0));
+P = (K1)/(s*(s+c1.p1));
+C1 = c1.K*((s+c1.p1)/(s+c1.g0));
+
+% Inside loop
+
+Ps = (zpk(C1)*zpk(P))/(1+zpk(C1)*zpk(P));
 
 % Lab 2 Part b, emulation of C1(s) with trapzoidal rule
 D1 = c2d(C1, Ts,'tustin');
@@ -57,6 +58,7 @@ D = 0.5;
 l = R - D;
 K2 = r/L;
 K3 = 4.55;
+Kbb = K2*K3;
 
 % Ball pson scale
 x1 = R/100;
@@ -68,8 +70,19 @@ b = x1-m*y1;
 
 %% Lab 3
 % Design controller 2
+c2.tset = 7.4;
+c2.os = 48;
 
-C2 = 7*((s+0.35)/(s+2.5));
+[c2.Re, c2.Im, c2.ang] = zone(c2.os,c2.tset);
+
+c2.p1 = c2.Re;
+c2.p2 = 2;
+c2.p3 = 4;
+
+c2.eps = 1/(c2.p1+c2.p2+c2.p3);
+c2.Kd = (c2.eps*(c2.p1*c2.p2+c2.p3*(c2.p1+c2.p2)))/Kbb;
+c2.Kp =(c2.eps*(c2.p1*c2.p2*c2.p3))/Kbb;
+C2 = (c2.Kd*s+c2.Kp)/(1+c2.eps*s);
 
 D2 = c2d(C2, Ts,'tustin');
 [c2.num,c2.den] = tfdata(D2,'v');
@@ -84,30 +97,39 @@ c2.c2 = c2.a/c2.c;
 c2.c3 = c2.b/c2.c;
 
 % Wave form
-wave.max = 0.24;
+wave.max = 0.29;
 wave.min = 0.14;
 wave.amp = 0.5*(wave.max-wave.min);
 wave.offset = wave.min+wave.amp;
 
+Pry = Ps*zpk(K2*K3/s^2);
+
+[c2.y, c2.t] = step(feedback(C2*Pry,1),15);
+
+plot(c2.t, c2.y)
+
+stepinfo(feedback(C2*Pry,1))
+
+
 % Simulate DT controller C2(s)
-sim('Simulink\Model_3ac_2015a');
+sim('Simulink\Model_3c_2015a');
 sim.ThRef = ThRef;
 sim.u = u;
 sim.ServoAng = ServoAng;
 sim.yref = yref;
 sim.BallPosn = BallPosn;
-sim.txt = 'Sim';
+sim.txt = 'Sim 3c';
 clear tout ThRef u ServoAng yref BallPosn
 
 % Import experimental data
-exp.data = xlsread('N:\GitHub\ECE481\Lab3\Data\170713_2.xlsx');
+exp.data = xlsread('N:\GitHub\ECE481\Lab3\Data\170718.xlsx');
 exp.t = exp.data(:,1);
 exp.yref = exp.data(:,2);
 exp.ServoAng = exp.data(:,3);
 exp.BallPosn = exp.data(:,4);
 exp.u = exp.data(:,5);
 exp.ThRef = exp.data(:,6);
-exp.txt = 'Exp';
+exp.txt = 'Exp 3c';
 
 % Tracking plot
 trackplot3(sim, exp, ms, 1);
